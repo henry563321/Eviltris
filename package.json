@@ -1,21 +1,8 @@
 {
   "name": "Eviltris",
-  "private": true,
-  "dependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "webpack": "^3.5.6"
-  },
-  "description": "This README would normally document whatever steps are necessary to get the application up and running.",
   "version": "1.0.0",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
+  "description": "",
+  "main": "webpack.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -29,5 +16,13 @@
   "bugs": {
     "url": "https://github.com/henry563321/Eviltris/issues"
   },
-  "homepage": "https://github.com/henry563321/Eviltris#readme"
+  "homepage": "https://github.com/henry563321/Eviltris#readme",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "react": "^15.6.1",
+    "webpack": "^3.5.6"
+  }
 }
