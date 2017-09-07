@@ -23,6 +23,7 @@ class Controller {
         this.removeBoard(this.board.board);
         this.removeItems(this.piece.piece);
         this.board.merge(this.piece.piece);
+        this.board.linetest();
         this.displayBoard(this.board.board);
         this.piece = new Piece();
         this.counter = 0;

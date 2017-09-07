@@ -22,6 +22,19 @@ class Board {
     return matrix;
   }
 
+  linetest() {
+    row: for (let i = 0; i < this.board.length; i++) {
+      for (let j = 0; j < this.board[0].length; j++) {
+        if (this.board[i][j] === 0) {
+          continue row;
+        }
+      }
+      this.board.splice(i, 1);
+      this.board.unshift(new Array(20).fill(0));
+    }
+
+  }
+
 }
 
 export default Board;

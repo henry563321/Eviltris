@@ -132,6 +132,7 @@ var Controller = function () {
           this.removeBoard(this.board.board);
           this.removeItems(this.piece.piece);
           this.board.merge(this.piece.piece);
+          this.board.linetest();
           this.displayBoard(this.board.board);
           this.piece = new _pieces2.default();
           this.counter = 0;
@@ -386,6 +387,19 @@ var Board = function () {
         matrix.push(new Array(20).fill(0));
       }
       return matrix;
+    }
+  }, {
+    key: "linetest",
+    value: function linetest() {
+      row: for (var i = 0; i < this.board.length; i++) {
+        for (var j = 0; j < this.board[0].length; j++) {
+          if (this.board[i][j] === 0) {
+            continue row;
+          }
+        }
+        this.board.splice(i, 1);
+        this.board.unshift(new Array(20).fill(0));
+      }
     }
   }]);
 
