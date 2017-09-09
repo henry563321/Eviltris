@@ -102,6 +102,8 @@ var _board = __webpack_require__(3);
 
 var _board2 = _interopRequireDefault(_board);
 
+var _helper = __webpack_require__(4);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -114,6 +116,8 @@ var Controller = function () {
     this.canvas = canvas;
     this.piece = new _pieces2.default();
     this.board = new _board2.default();
+    this.score = 0;
+    this.showscore();
     this.keyboard = this.keyboard.bind(this);
     this.dropdown = this.dropdown.bind(this);
     this.keyboard();
@@ -121,38 +125,44 @@ var Controller = function () {
   }
 
   _createClass(Controller, [{
+    key: 'showscore',
+    value: function showscore() {
+      var scoreboard = document.getElementById('scoreboard');
+      var ctx = scoreboard.getContext("2d");
+      ctx.font = "30px Arial";
+      ctx.clearRect(0, 0, 200, 200);
+      ctx.fillText('score: ' + this.board.score, 10, 50);
+    }
+  }, {
     key: 'dropdown',
     value: function dropdown() {
       this.counter += 10;
       if (this.counter === 500) {
         this.counter = 0;
         var nextPiece = Object.assign({}, this.piece.piece);
-        nextPiece.y += 15;
-        if (this.bang(nextPiece, this.board.board)) {
+        nextPiece.y += 30;
+        if ((0, _helper.bang)(nextPiece, this.board.board)) {
           this.removeBoard(this.board.board);
           this.removeItems(this.piece.piece);
           this.board.merge(this.piece.piece);
           this.board.linetest();
+          this.showscore();
+          this.score = this.board.score;
+          if (this.board.gameover()) {
+            this.board = new _board2.default();
+            this.piece = new _pieces2.default();
+            this.piece.y -= 30;
+            this.showscore();
+          } else {
+            this.piece = new _pieces2.default(this.board.board);
+            this.counter = 0;
+          }
           this.displayBoard(this.board.board);
-          this.piece = new _pieces2.default();
-          this.counter = 0;
         }
         this.removeItems(this.piece.piece);
-        this.piece.piece.y += 15;
+        this.piece.piece.y += 30;
         this.displayItems(this.piece.piece);
       }
-    }
-  }, {
-    key: 'bang',
-    value: function bang(piece, board) {
-      for (var x = 0; x < piece.piece.length; x++) {
-        for (var y = 0; y < piece.piece[0].length; y++) {
-          if (piece.piece[y][x] !== 0 && (board[y + piece.y / 15] && board[y + piece.y / 15][x + piece.x / 15]) !== 0) {
-            return true;
-          }
-        }
-      }
-      return false;
     }
   }, {
     key: 'removeBoard',
@@ -163,7 +173,7 @@ var Controller = function () {
         row.forEach(function (item, posy) {
           if (item !== 0) {
             var pieceOb = _this.canvas.getContext('2d');
-            pieceOb.clearRect(15 * posy, 15 * posx, 15, 15);
+            pieceOb.clearRect(30 * posy, 30 * posx, 30, 30);
           }
         });
       });
@@ -178,7 +188,7 @@ var Controller = function () {
           if (item !== 0) {
             var pieceOb = _this2.canvas.getContext('2d');
             pieceOb.fillStyle = "red";
-            pieceOb.fillRect(15 * posy, 15 * posx, 15, 15);
+            pieceOb.fillRect(30 * posy, 30 * posx, 30, 30);
           }
         });
       });
@@ -192,7 +202,7 @@ var Controller = function () {
         row.forEach(function (item, posy) {
           if (item !== 0) {
             var pieceOb = _this3.canvas.getContext('2d');
-            pieceOb.clearRect(items.x + 15 * posy, items.y + 15 * posx, 15, 15);
+            pieceOb.clearRect(items.x + 30 * posy, items.y + 30 * posx, 30, 30);
           }
         });
       });
@@ -207,7 +217,7 @@ var Controller = function () {
           if (item !== 0) {
             var pieceOb = _this4.canvas.getContext('2d');
             pieceOb.fillStyle = "red";
-            pieceOb.fillRect(items.x + 15 * posy, items.y + 15 * posx, 15, 15);
+            pieceOb.fillRect(items.x + 30 * posy, items.y + 30 * posx, 30, 30);
           }
         });
       });
@@ -217,7 +227,7 @@ var Controller = function () {
     value: function moveitem(dir) {
       var nextPiece = Object.assign({}, this.piece.piece);
       nextPiece.x += dir;
-      if (!this.bang(nextPiece, this.board.board)) {
+      if (!(0, _helper.bang)(nextPiece, this.board.board)) {
         this.removeItems(this.piece.piece);
         this.piece.piece.x += dir;
         this.displayItems(this.piece.piece);
@@ -227,10 +237,10 @@ var Controller = function () {
     key: 'dropitem',
     value: function dropitem() {
       var nextPiece = Object.assign({}, this.piece.piece);
-      nextPiece.y += 15;
-      if (!this.bang(nextPiece, this.board.board)) {
+      nextPiece.y += 30;
+      if (!(0, _helper.bang)(nextPiece, this.board.board)) {
         this.removeItems(this.piece.piece);
-        this.piece.piece.y += 15;
+        this.piece.piece.y += 30;
         this.displayItems(this.piece.piece);
       }
     }
@@ -246,28 +256,13 @@ var Controller = function () {
         }
         clone.push(clonearray);
       }
-      this.transpose(clone);
+      (0, _helper.transpose)(clone);
       nextPiece.piece = clone;
-      if (!this.bang(nextPiece, this.board.board)) {
+      if (!(0, _helper.bang)(nextPiece, this.board.board)) {
         this.removeItems(this.piece.piece);
-        this.piece.piece.piece = this.transpose(this.piece.piece.piece);
+        this.piece.piece.piece = (0, _helper.transpose)(this.piece.piece.piece);
         this.displayItems(this.piece.piece);
       }
-    }
-  }, {
-    key: 'transpose',
-    value: function transpose(matrix) {
-      for (var i = 0; i < matrix.length; i++) {
-        for (var j = i; j < matrix[0].length; j++) {
-          var _ref = [matrix[j][i], matrix[i][j]];
-          matrix[i][j] = _ref[0];
-          matrix[j][i] = _ref[1];
-        }
-      }
-      matrix.map(function (row) {
-        return row.reverse();
-      });
-      return matrix;
     }
   }, {
     key: 'keyboard',
@@ -277,7 +272,7 @@ var Controller = function () {
       document.addEventListener('keydown', function (event) {
         //left
         if (event.keyCode === 37) {
-          _this5.moveitem(-15);
+          _this5.moveitem(-30);
         }
         //top
         else if (event.keyCode === 38) {
@@ -285,7 +280,7 @@ var Controller = function () {
           }
           //right
           else if (event.keyCode === 39) {
-              _this5.moveitem(+15);
+              _this5.moveitem(+30);
             }
             //bottom
             else if (event.keyCode === 40) {
@@ -313,6 +308,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _helper = __webpack_require__(4);
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var pieceI = [[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0]];
@@ -325,19 +322,44 @@ var pieceO = [[1, 1], [1, 1]];
 var pieceZ = [[1, 1, 0], [0, 1, 1], [0, 0, 0]];
 
 var pieces = [pieceZ, pieceO, pieceS, pieceT, pieceI, pieceJ, pieceL];
+var piecescolor = [pieceZ, pieceO, pieceS, pieceT, pieceI, pieceJ, pieceL];
 
 var Piece = function () {
   function Piece() {
+    var board = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
     _classCallCheck(this, Piece);
 
-    this.piece = { x: 135, y: 0, piece: this.randomPiece() };
+    this.piece = { x: 120, y: 0, piece: this.randomPiece() };
+    this.board = board;
+    this.score = new Array(7).fill(0);
   }
 
   _createClass(Piece, [{
-    key: "randomPiece",
+    key: 'randomPiece',
     value: function randomPiece() {
       return pieces[Math.floor(Math.random() * pieces.length)];
     }
+  }, {
+    key: 'nextPiece',
+    value: function nextPiece() {
+      for (var x = 0; x < this.board[0].length; x++) {
+        var y = this.search(this.board, x);
+      }
+    }
+  }, {
+    key: 'search',
+    value: function search(board, x) {
+      for (var y = 0; y < this.board.length; x++) {
+        if (board[x][y] === 1) {
+          return y;
+        }
+      }
+      return 19;
+    }
+  }, {
+    key: 'linetest',
+    value: function linetest(x, board) {}
   }]);
 
   return Piece;
@@ -366,6 +388,7 @@ var Board = function () {
 
     this.board = this.createMatrix();
     this.merge = this.merge.bind(this);
+    this.score = 0;
   }
 
   _createClass(Board, [{
@@ -374,7 +397,7 @@ var Board = function () {
       for (var x = 0; x < piece.piece.length; x++) {
         for (var y = 0; y < piece.piece[0].length; y++) {
           if (piece.piece[y][x] !== 0) {
-            this.board[y + piece.y / 15][x + piece.x / 15] = piece.piece[y][x];
+            this.board[y + piece.y / 30][x + piece.x / 30] = piece.piece[y][x];
           }
         }
       }
@@ -383,8 +406,8 @@ var Board = function () {
     key: "createMatrix",
     value: function createMatrix() {
       var matrix = [];
-      for (var i = 0; i < 40; i++) {
-        matrix.push(new Array(20).fill(0));
+      for (var i = 0; i < 20; i++) {
+        matrix.push(new Array(10).fill(0));
       }
       return matrix;
     }
@@ -398,8 +421,14 @@ var Board = function () {
           }
         }
         this.board.splice(i, 1);
-        this.board.unshift(new Array(20).fill(0));
+        this.score += 100;
+        this.board.unshift(new Array(10).fill(0));
       }
+    }
+  }, {
+    key: "gameover",
+    value: function gameover() {
+      return this.board[5].includes(1);
     }
   }]);
 
@@ -407,6 +436,41 @@ var Board = function () {
 }();
 
 exports.default = Board;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var transpose = exports.transpose = function transpose(matrix) {
+  for (var i = 0; i < matrix.length; i++) {
+    for (var j = i; j < matrix[0].length; j++) {
+      var _ref = [matrix[j][i], matrix[i][j]];
+      matrix[i][j] = _ref[0];
+      matrix[j][i] = _ref[1];
+    }
+  }
+  matrix.map(function (row) {
+    return row.reverse();
+  });
+  return matrix;
+};
+
+var bang = exports.bang = function bang(piece, board) {
+  for (var x = 0; x < piece.piece.length; x++) {
+    for (var y = 0; y < piece.piece[0].length; y++) {
+      if (piece.piece[y][x] !== 0 && (board[y + piece.y / 30] && board[y + piece.y / 30][x + piece.x / 30]) !== 0) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
 
 /***/ })
 /******/ ]);

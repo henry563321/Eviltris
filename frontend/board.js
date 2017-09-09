@@ -2,13 +2,14 @@ class Board {
   constructor() {
     this.board = this.createMatrix();
     this.merge = this.merge.bind(this);
+    this.score = 0;
   }
 
   merge(piece) {
     for(let x = 0; x < piece.piece.length; x++) {
       for(let y = 0; y < piece.piece[0].length; y++) {
         if (piece.piece[y][x] !== 0) {
-          this.board[y + piece.y/15][x + piece.x/15] = piece.piece[y][x];
+          this.board[y + piece.y/30][x + piece.x/30] = piece.piece[y][x];
         }
       }
     }
@@ -16,8 +17,8 @@ class Board {
 
   createMatrix() {
     const matrix = [];
-    for (let i = 0; i < 40; i++) {
-      matrix.push(new Array(20).fill(0));
+    for (let i = 0; i < 20; i++) {
+      matrix.push(new Array(10).fill(0));
     }
     return matrix;
   }
@@ -30,9 +31,13 @@ class Board {
         }
       }
       this.board.splice(i, 1);
-      this.board.unshift(new Array(20).fill(0));
+      this.score += 100;
+      this.board.unshift(new Array(10).fill(0));
     }
+  }
 
+  gameover() {
+    return this.board[5].includes(1);
   }
 
 }

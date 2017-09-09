@@ -1,5 +1,6 @@
 import Piece from './pieces.js';
 import Board from './board.js';
+import {bang, transpose} from './helper.js';
 
 class Controller {
   constructor(canvas) {
@@ -7,10 +8,20 @@ class Controller {
     this.canvas = canvas;
     this.piece = new Piece();
     this.board = new Board();
+    this.score = 0;
+    this.showscore();
     this.keyboard = this.keyboard.bind(this);
     this.dropdown = this.dropdown.bind(this);
     this.keyboard();
     const drop = setInterval(this.dropdown, 10);
+  }
+
+  showscore() {
+    const scoreboard = document.getElementById('scoreboard');
+    var ctx = scoreboard.getContext("2d");
+    ctx.font = "30px Arial";
+    ctx.clearRect(0,0,200,200);
+    ctx.fillText(`score: ${this.board.score}`,10,50);
   }
 
   dropdown() {
@@ -18,40 +29,39 @@ class Controller {
     if (this.counter === 500) {
       this.counter = 0;
       let nextPiece = Object.assign({},this.piece.piece);
-      nextPiece.y += 15;
-      if (this.bang(nextPiece, this.board.board)) {
+      nextPiece.y += 30;
+      if (bang(nextPiece, this.board.board)) {
         this.removeBoard(this.board.board);
         this.removeItems(this.piece.piece);
         this.board.merge(this.piece.piece);
         this.board.linetest();
-        this.displayBoard(this.board.board);
-        this.piece = new Piece();
+        this.showscore();
+        this.score = this.board.score;
+        if (this.board.gameover()) {
+          this.board = new Board();
+          this.piece = new Piece();
+          this.piece.y -= 30;
+          this.showscore();
+        } else {
+        this.piece = new Piece(this.board.board);
         this.counter = 0;
+        }
+        this.displayBoard(this.board.board);
       }
       this.removeItems(this.piece.piece);
-      this.piece.piece.y += 15;
+      this.piece.piece.y += 30;
       this.displayItems(this.piece.piece);
     }
   }
 
-  bang(piece, board) {
-    for(let x = 0; x < piece.piece.length; x++) {
-      for(let y = 0; y < piece.piece[0].length; y++) {
-        if (piece.piece[y][x] !== 0 && (board[y + piece.y/15]
-          && board[y + piece.y/15][x + piece.x/15]) !== 0) {
-            return true;
-          }
-      }
-    }
-    return false;
-  }
+
 
   removeBoard(board) {
     board.forEach( (row, posx) => {
       row.forEach((item, posy) => {
         if(item !== 0) {
           var pieceOb = this.canvas.getContext('2d');
-          pieceOb.clearRect(15 * posy, 15 * posx, 15, 15);
+          pieceOb.clearRect(30 * posy, 30 * posx, 30, 30);
         }
       });
     });
@@ -65,7 +75,7 @@ class Controller {
         if(item !== 0) {
           var pieceOb = this.canvas.getContext('2d');
           pieceOb.fillStyle = "red";
-          pieceOb.fillRect(15 * posy, 15 * posx, 15, 15);
+          pieceOb.fillRect(30 * posy, 30 * posx, 30, 30);
         }
       });
     });
@@ -77,7 +87,7 @@ class Controller {
       row.forEach((item, posy) => {
         if(item !== 0) {
           var pieceOb = this.canvas.getContext('2d');
-          pieceOb.clearRect(items.x + 15 * posy, items.y + 15 * posx, 15, 15);
+          pieceOb.clearRect(items.x + 30 * posy, items.y + 30 * posx, 30, 30);
         }
       });
     });
@@ -91,7 +101,7 @@ class Controller {
         if(item !== 0) {
           var pieceOb = this.canvas.getContext('2d');
           pieceOb.fillStyle = "red";
-          pieceOb.fillRect(items.x + 15 * posy, items.y + 15 * posx, 15, 15);
+          pieceOb.fillRect(items.x + 30 * posy, items.y + 30 * posx, 30, 30);
         }
       });
     });
@@ -100,7 +110,7 @@ class Controller {
   moveitem(dir) {
     let nextPiece = Object.assign({},this.piece.piece);
     nextPiece.x += dir;
-    if (!this.bang(nextPiece, this.board.board)) {
+    if (!bang(nextPiece, this.board.board)) {
       this.removeItems(this.piece.piece);
       this.piece.piece.x += dir;
       this.displayItems(this.piece.piece);
@@ -109,10 +119,10 @@ class Controller {
 
   dropitem() {
     let nextPiece = Object.assign({},this.piece.piece);
-    nextPiece.y += 15;
-    if (!this.bang(nextPiece, this.board.board)) {
+    nextPiece.y += 30;
+    if (!bang(nextPiece, this.board.board)) {
       this.removeItems(this.piece.piece);
-      this.piece.piece.y += 15;
+      this.piece.piece.y += 30;
       this.displayItems(this.piece.piece);
     }
   }
@@ -127,30 +137,22 @@ class Controller {
       }
       clone.push(clonearray);
     }
-    this.transpose(clone);
+    transpose(clone);
     nextPiece.piece = clone;
-    if (!this.bang(nextPiece, this.board.board)) {
+    if (!bang(nextPiece, this.board.board)) {
       this.removeItems(this.piece.piece);
-      this.piece.piece.piece = this.transpose(this.piece.piece.piece);
+      this.piece.piece.piece = transpose(this.piece.piece.piece);
       this.displayItems(this.piece.piece);
     }
   }
 
-  transpose(matrix) {
-    for(let i = 0; i < matrix.length; i++) {
-      for(let j = i; j < matrix[0].length; j++) {
-        [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];
-      }
-    }
-    matrix.map((row) => row.reverse());
-    return matrix;
-  }
+
 
   keyboard() {
     document.addEventListener('keydown', (event) => {
         //left
       if(event.keyCode === 37) {
-        this.moveitem(-15);
+        this.moveitem(-30);
       }
       //top
       else if(event.keyCode === 38) {
@@ -158,7 +160,7 @@ class Controller {
       }
       //right
       else if(event.keyCode === 39) {
-          this.moveitem(+15);
+          this.moveitem(+30);
       }
       //bottom
       else if(event.keyCode === 40) {
