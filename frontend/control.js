@@ -9,6 +9,7 @@ class Controller {
     this.piece = new Piece();
     this.board = new Board();
     this.score = 0;
+    this.colors = [null, 'red', 'magenta', 'yellow', 'cyan', 'silver', 'lightgreen', 'blue']
     this.showscore();
     this.keyboard = this.keyboard.bind(this);
     this.dropdown = this.dropdown.bind(this);
@@ -73,9 +74,12 @@ class Controller {
     board.forEach( (row, posx) => {
       row.forEach((item, posy) => {
         if(item !== 0) {
-          var pieceOb = this.canvas.getContext('2d');
-          pieceOb.fillStyle = "red";
-          pieceOb.fillRect(30 * posy, 30 * posx, 30, 30);
+          var ctx = this.canvas.getContext('2d');
+          ctx.fillStyle = 'black';
+          ctx.fillRect(30 * posy, 30 * posx, 30, 30);
+          ctx.clearRect(30 * posy + 5, 30 * posx + 5, 20, 20);
+          ctx.fillStyle = this.colors[item];
+          ctx.fillRect(30 * posy + 5, 30 * posx + 5, 20, 20);
         }
       });
     });
@@ -99,9 +103,12 @@ class Controller {
     items.piece.forEach( (row, posx) => {
       row.forEach((item, posy) => {
         if(item !== 0) {
-          var pieceOb = this.canvas.getContext('2d');
-          pieceOb.fillStyle = "red";
-          pieceOb.fillRect(items.x + 30 * posy, items.y + 30 * posx, 30, 30);
+          var ctx = this.canvas.getContext('2d');
+          ctx.fillStyle = 'black';
+          ctx.fillRect(items.x + 30 * posy, items.y + 30 * posx, 30, 30);
+          ctx.clearRect(items.x + 30 * posy + 5, items.y + 30 * posx + 5, 20, 20);
+          ctx.fillStyle = this.colors[item];
+          ctx.fillRect(items.x + 30 * posy + 5, items.y + 30 * posx + 5, 20, 20);
         }
       });
     });

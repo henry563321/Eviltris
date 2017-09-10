@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,19 +70,60 @@
 "use strict";
 
 
-var _control = __webpack_require__(1);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var transpose = exports.transpose = function transpose(matrix) {
+  for (var i = 0; i < matrix.length; i++) {
+    for (var j = i; j < matrix[0].length; j++) {
+      var _ref = [matrix[j][i], matrix[i][j]];
+      matrix[i][j] = _ref[0];
+      matrix[j][i] = _ref[1];
+    }
+  }
+  matrix.map(function (row) {
+    return row.reverse();
+  });
+  return matrix;
+};
+
+var bang = exports.bang = function bang(piece, board) {
+  for (var x = 0; x < piece.piece.length; x++) {
+    for (var y = 0; y < piece.piece[0].length; y++) {
+      if (piece.piece[y][x] !== 0 && (board[y + piece.y / 30] && board[y + piece.y / 30][x + piece.x / 30]) !== 0) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _control = __webpack_require__(2);
 
 var _control2 = _interopRequireDefault(_control);
+
+var _UI = __webpack_require__(5);
+
+var _UI2 = _interopRequireDefault(_UI);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 document.addEventListener('DOMContentLoaded', function () {
   var canvas = document.getElementById('canvas');
   var control = new _control2.default(canvas);
+  var controlboard = document.getElementById('controlboard');
+  var ui = new _UI2.default(controlboard);
 });
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -94,15 +135,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _pieces = __webpack_require__(2);
+var _pieces = __webpack_require__(3);
 
 var _pieces2 = _interopRequireDefault(_pieces);
 
-var _board = __webpack_require__(3);
+var _board = __webpack_require__(4);
 
 var _board2 = _interopRequireDefault(_board);
 
-var _helper = __webpack_require__(4);
+var _helper = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -117,6 +158,7 @@ var Controller = function () {
     this.piece = new _pieces2.default();
     this.board = new _board2.default();
     this.score = 0;
+    this.colors = [null, 'red', 'magenta', 'yellow', 'cyan', 'silver', 'lightgreen', 'blue'];
     this.showscore();
     this.keyboard = this.keyboard.bind(this);
     this.dropdown = this.dropdown.bind(this);
@@ -186,9 +228,12 @@ var Controller = function () {
       board.forEach(function (row, posx) {
         row.forEach(function (item, posy) {
           if (item !== 0) {
-            var pieceOb = _this2.canvas.getContext('2d');
-            pieceOb.fillStyle = "red";
-            pieceOb.fillRect(30 * posy, 30 * posx, 30, 30);
+            var ctx = _this2.canvas.getContext('2d');
+            ctx.fillStyle = 'black';
+            ctx.fillRect(30 * posy, 30 * posx, 30, 30);
+            ctx.clearRect(30 * posy + 5, 30 * posx + 5, 20, 20);
+            ctx.fillStyle = _this2.colors[item];
+            ctx.fillRect(30 * posy + 5, 30 * posx + 5, 20, 20);
           }
         });
       });
@@ -215,9 +260,12 @@ var Controller = function () {
       items.piece.forEach(function (row, posx) {
         row.forEach(function (item, posy) {
           if (item !== 0) {
-            var pieceOb = _this4.canvas.getContext('2d');
-            pieceOb.fillStyle = "red";
-            pieceOb.fillRect(items.x + 30 * posy, items.y + 30 * posx, 30, 30);
+            var ctx = _this4.canvas.getContext('2d');
+            ctx.fillStyle = 'black';
+            ctx.fillRect(items.x + 30 * posy, items.y + 30 * posx, 30, 30);
+            ctx.clearRect(items.x + 30 * posy + 5, items.y + 30 * posx + 5, 20, 20);
+            ctx.fillStyle = _this4.colors[item];
+            ctx.fillRect(items.x + 30 * posy + 5, items.y + 30 * posx + 5, 20, 20);
           }
         });
       });
@@ -296,7 +344,7 @@ var Controller = function () {
 exports.default = Controller;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -308,21 +356,20 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _helper = __webpack_require__(4);
+var _helper = __webpack_require__(0);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var pieceI = [[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0]];
-var pieceJ = [[0, 1, 0], [0, 1, 0], [1, 1, 0]];
-var pieceL = [[0, 1, 0], [0, 1, 0], [0, 1, 1]];
+var pieceJ = [[0, 2, 0], [0, 2, 0], [2, 2, 0]];
+var pieceL = [[0, 3, 0], [0, 3, 0], [0, 3, 3]];
 
-var pieceS = [[0, 1, 1], [1, 1, 0], [0, 0, 0]];
-var pieceT = [[0, 0, 0], [1, 1, 1], [0, 1, 0]];
-var pieceO = [[1, 1], [1, 1]];
-var pieceZ = [[1, 1, 0], [0, 1, 1], [0, 0, 0]];
+var pieceS = [[0, 4, 4], [4, 4, 0], [0, 0, 0]];
+var pieceT = [[0, 0, 0], [5, 5, 5], [0, 5, 0]];
+var pieceO = [[6, 6], [6, 6]];
+var pieceZ = [[7, 7, 0], [0, 7, 7], [0, 0, 0]];
 
-var pieces = [pieceZ, pieceO, pieceS, pieceT, pieceI, pieceJ, pieceL];
-var piecescolor = [pieceZ, pieceO, pieceS, pieceT, pieceI, pieceJ, pieceL];
+var pieces = [pieceI, pieceJ, pieceL, pieceS, pieceT, pieceO, pieceZ];
 
 var Piece = function () {
   function Piece() {
@@ -343,23 +390,41 @@ var Piece = function () {
   }, {
     key: 'nextPiece',
     value: function nextPiece() {
+      var piecescore = [p];
       for (var x = 0; x < this.board[0].length; x++) {
         var y = this.search(this.board, x);
+        for (var i = 0; i < 7; i++) {
+          for (var j = 0; j < 4; j++) {}
+        }
+        var piecepos = this.piecepos(y, this.board);
       }
     }
   }, {
     key: 'search',
     value: function search(board, x) {
       for (var y = 0; y < this.board.length; x++) {
-        if (board[x][y] === 1) {
+        if (board[x][y] !== 0) {
           return y;
         }
       }
       return 19;
     }
   }, {
+    key: 'piecepos',
+    value: function piecepos(y) {}
+  }, {
     key: 'linetest',
-    value: function linetest(x, board) {}
+    value: function linetest(x, board) {
+      row: for (var i = 0; i < this.board.length; i++) {
+        for (var j = 0; j < this.board[0].length; j++) {
+          if (this.board[i][j] === 0) {
+            continue row;
+          }
+        }
+        this.score += 100;
+        this.board.unshift(new Array(10).fill(0));
+      }
+    }
   }]);
 
   return Piece;
@@ -368,7 +433,7 @@ var Piece = function () {
 exports.default = Piece;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -428,7 +493,12 @@ var Board = function () {
   }, {
     key: "gameover",
     value: function gameover() {
-      return this.board[5].includes(1);
+      for (var i = 0; i < this.board[0].length; i++) {
+        if (this.board[3][i] !== 0) {
+          return true;
+        }
+      }
+      return false;
     }
   }]);
 
@@ -438,7 +508,7 @@ var Board = function () {
 exports.default = Board;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -447,30 +517,14 @@ exports.default = Board;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var transpose = exports.transpose = function transpose(matrix) {
-  for (var i = 0; i < matrix.length; i++) {
-    for (var j = i; j < matrix[0].length; j++) {
-      var _ref = [matrix[j][i], matrix[i][j]];
-      matrix[i][j] = _ref[0];
-      matrix[j][i] = _ref[1];
-    }
-  }
-  matrix.map(function (row) {
-    return row.reverse();
-  });
-  return matrix;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var UI = function UI() {
+  _classCallCheck(this, UI);
 };
 
-var bang = exports.bang = function bang(piece, board) {
-  for (var x = 0; x < piece.piece.length; x++) {
-    for (var y = 0; y < piece.piece[0].length; y++) {
-      if (piece.piece[y][x] !== 0 && (board[y + piece.y / 30] && board[y + piece.y / 30][x + piece.x / 30]) !== 0) {
-        return true;
-      }
-    }
-  }
-  return false;
-};
+exports.default = UI;
 
 /***/ })
 /******/ ]);

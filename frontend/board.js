@@ -37,7 +37,12 @@ class Board {
   }
 
   gameover() {
-    return this.board[5].includes(1);
+    for(let i = 0; i < this.board[0].length; i++) {
+      if (this.board[3][i] !== 0 ) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
