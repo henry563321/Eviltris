@@ -627,6 +627,10 @@ var UI = function UI(controller) {
   restartGame.addEventListener('click', function () {
     _this.control.restart();
   });
+  var music = document.getElementById('restartbutton');
+  restartGame.addEventListener('click', function () {
+    _this.control.restart();
+  });
 };
 
 exports.default = UI;

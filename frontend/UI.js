@@ -7,6 +7,8 @@ class UI {
     pauseGame.addEventListener('click', () => {cancelAnimationFrame(this.control.game);});
     const restartGame = document.getElementById('restartbutton');
     restartGame.addEventListener('click', () => {this.control.restart();});
+    const music = document.getElementById('restartbutton');
+    restartGame.addEventListener('click', () => {this.control.restart();});
   }
 
 
