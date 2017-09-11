@@ -9,24 +9,44 @@ class Controller {
     this.piece = new Piece();
     this.board = new Board();
     this.score = 0;
-    this.colors = [null, 'red', 'magenta', 'yellow', 'cyan', 'silver', 'lightgreen', 'blue']
+    this.scoreboard = [];
+    this.showscoreboard();
+    this.colors = [null, 'red', 'magenta', 'yellow', 'cyan', 'silver', 'lightgreen', 'blue'];
     this.showscore();
     this.keyboard = this.keyboard.bind(this);
     this.dropdown = this.dropdown.bind(this);
     this.keyboard();
-    const drop = setInterval(this.dropdown, 10);
+    this.game = {};
   }
 
   showscore() {
     const scoreboard = document.getElementById('scoreboard');
     var ctx = scoreboard.getContext("2d");
     ctx.font = "30px Arial";
-    ctx.clearRect(0,0,200,200);
-    ctx.fillText(`score: ${this.board.score}`,10,50);
+    ctx.clearRect(0, 400, 200, 200);
+    ctx.fillText(`score: ${this.board.score}`, 10, 450);
+  }
+
+  showscoreboard() {
+    const scoreboard = document.getElementById('scoreboard');
+    this.scoreboard = this.scoreboard.sort((a,b) => {return b - a;});
+    var ctx = scoreboard.getContext("2d");
+    ctx.font = "30px Arial";
+    ctx.clearRect(0,0,200,400);
+    ctx.fillText(`ScoreBoard`, 10, 50);
+    let i = 0;
+    while (i < 5) {
+      if( this.scoreboard[i] ) {
+        ctx.fillText(`${i + 1}  score: ${this.scoreboard[i]}`, 10, 60 * (i + 1) + 50);
+      } else {
+        ctx.fillText(`${i + 1}  score: 0`, 10, 60 * (i + 1) + 50);
+      }
+      i++;
+    }
   }
 
   dropdown() {
-    this.counter += 10;
+    this.counter += 20;
     if (this.counter === 500) {
       this.counter = 0;
       let nextPiece = Object.assign({},this.piece.piece);
@@ -39,10 +59,12 @@ class Controller {
         this.showscore();
         this.score = this.board.score;
         if (this.board.gameover()) {
+          this.scoreboard.push(this.score);
           this.board = new Board();
           this.piece = new Piece();
           this.piece.y -= 30;
           this.showscore();
+          this.showscoreboard();
         } else {
         this.piece = new Piece(this.board.board);
         this.counter = 0;
@@ -53,6 +75,22 @@ class Controller {
       this.piece.piece.y += 30;
       this.displayItems(this.piece.piece);
     }
+    this.game = requestAnimationFrame(this.dropdown);
+  }
+
+  restart() {
+    this.removeBoard(this.board.board);
+    this.removeItems(this.piece.piece);
+    this.board = new Board();
+    this.piece = new Piece();
+    this.piece.y -= 30;
+    this.showscore();
+    this.showscoreboard();
+    this.displayBoard(this.board.board);
+    this.piece.piece.y += 30;
+    this.displayItems(this.piece.piece);
+    cancelAnimationFrame(this.game);
+    this.dropdown();
   }
 
 

@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var canvas = document.getElementById('canvas');
   var control = new _control2.default(canvas);
   var controlboard = document.getElementById('controlboard');
-  var ui = new _UI2.default(controlboard);
+  var ui = new _UI2.default(control);
 });
 
 /***/ }),
@@ -158,12 +158,14 @@ var Controller = function () {
     this.piece = new _pieces2.default();
     this.board = new _board2.default();
     this.score = 0;
+    this.scoreboard = [];
+    this.showscoreboard();
     this.colors = [null, 'red', 'magenta', 'yellow', 'cyan', 'silver', 'lightgreen', 'blue'];
     this.showscore();
     this.keyboard = this.keyboard.bind(this);
     this.dropdown = this.dropdown.bind(this);
     this.keyboard();
-    var drop = setInterval(this.dropdown, 10);
+    this.game = {};
   }
 
   _createClass(Controller, [{
@@ -172,13 +174,34 @@ var Controller = function () {
       var scoreboard = document.getElementById('scoreboard');
       var ctx = scoreboard.getContext("2d");
       ctx.font = "30px Arial";
-      ctx.clearRect(0, 0, 200, 200);
-      ctx.fillText('score: ' + this.board.score, 10, 50);
+      ctx.clearRect(0, 400, 200, 200);
+      ctx.fillText('score: ' + this.board.score, 10, 450);
+    }
+  }, {
+    key: 'showscoreboard',
+    value: function showscoreboard() {
+      var scoreboard = document.getElementById('scoreboard');
+      this.scoreboard = this.scoreboard.sort(function (a, b) {
+        return b - a;
+      });
+      var ctx = scoreboard.getContext("2d");
+      ctx.font = "30px Arial";
+      ctx.clearRect(0, 0, 200, 400);
+      ctx.fillText('ScoreBoard', 10, 50);
+      var i = 0;
+      while (i < 5) {
+        if (this.scoreboard[i]) {
+          ctx.fillText(i + 1 + '  score: ' + this.scoreboard[i], 10, 60 * (i + 1) + 50);
+        } else {
+          ctx.fillText(i + 1 + '  score: 0', 10, 60 * (i + 1) + 50);
+        }
+        i++;
+      }
     }
   }, {
     key: 'dropdown',
     value: function dropdown() {
-      this.counter += 10;
+      this.counter += 20;
       if (this.counter === 500) {
         this.counter = 0;
         var nextPiece = Object.assign({}, this.piece.piece);
@@ -191,10 +214,12 @@ var Controller = function () {
           this.showscore();
           this.score = this.board.score;
           if (this.board.gameover()) {
+            this.scoreboard.push(this.score);
             this.board = new _board2.default();
             this.piece = new _pieces2.default();
             this.piece.y -= 30;
             this.showscore();
+            this.showscoreboard();
           } else {
             this.piece = new _pieces2.default(this.board.board);
             this.counter = 0;
@@ -205,6 +230,23 @@ var Controller = function () {
         this.piece.piece.y += 30;
         this.displayItems(this.piece.piece);
       }
+      this.game = requestAnimationFrame(this.dropdown);
+    }
+  }, {
+    key: 'restart',
+    value: function restart() {
+      this.removeBoard(this.board.board);
+      this.removeItems(this.piece.piece);
+      this.board = new _board2.default();
+      this.piece = new _pieces2.default();
+      this.piece.y -= 30;
+      this.showscore();
+      this.showscoreboard();
+      this.displayBoard(this.board.board);
+      this.piece.piece.y += 30;
+      this.displayItems(this.piece.piece);
+      cancelAnimationFrame(this.game);
+      this.dropdown();
     }
   }, {
     key: 'removeBoard',
@@ -567,8 +609,24 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var UI = function UI() {
+var UI = function UI(controller) {
+  var _this = this;
+
   _classCallCheck(this, UI);
+
+  this.control = controller;
+  var startGame = document.getElementById('startbutton');
+  startGame.addEventListener('click', function () {
+    requestAnimationFrame(_this.control.dropdown);
+  });
+  var pauseGame = document.getElementById('pausebutton');
+  pauseGame.addEventListener('click', function () {
+    cancelAnimationFrame(_this.control.game);
+  });
+  var restartGame = document.getElementById('restartbutton');
+  restartGame.addEventListener('click', function () {
+    _this.control.restart();
+  });
 };
 
 exports.default = UI;
