@@ -24,6 +24,22 @@ span {
   color: white;
 }
 
+.pls-work {
+  display: flex;
+  justify-content: space-around;
+  color: white;
+  font-size: 20px;
+  text-decoration: none;
+  margin-bottom: 20px;
+}
+
+.link {
+  color: white;
+  text-decoration: none;
+}
+
+
+
 #buttons {
   display: flex;
   justify-content: space-around;

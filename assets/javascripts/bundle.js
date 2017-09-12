@@ -627,9 +627,14 @@ var UI = function UI(controller) {
   restartGame.addEventListener('click', function () {
     _this.control.restart();
   });
-  var music = document.getElementById('restartbutton');
-  restartGame.addEventListener('click', function () {
-    _this.control.restart();
+  var music = document.getElementById('musicbutton');
+  music.addEventListener('click', function () {
+    var background = document.getElementById('background');
+    if (background.paused) {
+      background.play();
+    } else {
+      background.pause();
+    }
   });
 };
 
