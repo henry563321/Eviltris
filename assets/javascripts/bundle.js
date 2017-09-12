@@ -174,8 +174,8 @@ var Controller = function () {
       var scoreboard = document.getElementById('scoreboard');
       var ctx = scoreboard.getContext("2d");
       ctx.font = "30px Arial";
-      ctx.clearRect(0, 400, 200, 200);
-      ctx.fillText('score: ' + this.board.score, 10, 450);
+      ctx.clearRect(0, 350, 200, 150);
+      ctx.fillText('score: ' + this.board.score, 10, 400);
     }
   }, {
     key: 'showscoreboard',
@@ -186,14 +186,14 @@ var Controller = function () {
       });
       var ctx = scoreboard.getContext("2d");
       ctx.font = "30px Arial";
-      ctx.clearRect(0, 0, 200, 400);
+      ctx.clearRect(0, 0, 200, 350);
       ctx.fillText('ScoreBoard', 10, 50);
       var i = 0;
       while (i < 5) {
         if (this.scoreboard[i]) {
-          ctx.fillText(i + 1 + '  score: ' + this.scoreboard[i], 10, 60 * (i + 1) + 50);
+          ctx.fillText(i + 1 + '  score: ' + this.scoreboard[i], 10, 50 * (i + 1) + 50);
         } else {
-          ctx.fillText(i + 1 + '  score: 0', 10, 60 * (i + 1) + 50);
+          ctx.fillText(i + 1 + '  score: 0', 10, 50 * (i + 1) + 50);
         }
         i++;
       }
@@ -361,19 +361,19 @@ var Controller = function () {
 
       document.addEventListener('keydown', function (event) {
         //left
-        if (event.keyCode === 37) {
+        if (event.keyCode === 65) {
           _this5.moveitem(-30);
         }
         //top
-        else if (event.keyCode === 38) {
+        else if (event.keyCode === 87) {
             _this5.transposeitem();
           }
           //right
-          else if (event.keyCode === 39) {
+          else if (event.keyCode === 68) {
               _this5.moveitem(+30);
             }
             //bottom
-            else if (event.keyCode === 40) {
+            else if (event.keyCode === 83) {
                 _this5.dropitem();
               }
       });
@@ -461,7 +461,7 @@ var Piece = function () {
           return y;
         }
       }
-      return 19;
+      return 14;
     }
   }, {
     key: 'score',
@@ -560,7 +560,7 @@ var Board = function () {
     key: "createMatrix",
     value: function createMatrix() {
       var matrix = [];
-      for (var i = 0; i < 20; i++) {
+      for (var i = 0; i < 15; i++) {
         matrix.push(new Array(10).fill(0));
       }
       return matrix;

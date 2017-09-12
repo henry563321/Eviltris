@@ -17,7 +17,7 @@ class Board {
 
   createMatrix() {
     const matrix = [];
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 15; i++) {
       matrix.push(new Array(10).fill(0));
     }
     return matrix;

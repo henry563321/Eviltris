@@ -82,7 +82,7 @@ class Piece {
         return y;
       }
     }
-    return 19;
+    return 14;
   }
 
   score(x, y, board, piece) {

@@ -23,8 +23,8 @@ class Controller {
     const scoreboard = document.getElementById('scoreboard');
     var ctx = scoreboard.getContext("2d");
     ctx.font = "30px Arial";
-    ctx.clearRect(0, 400, 200, 200);
-    ctx.fillText(`score: ${this.board.score}`, 10, 450);
+    ctx.clearRect(0, 350, 200, 150);
+    ctx.fillText(`score: ${this.board.score}`, 10, 400);
   }
 
   showscoreboard() {
@@ -32,14 +32,14 @@ class Controller {
     this.scoreboard = this.scoreboard.sort((a,b) => {return b - a;});
     var ctx = scoreboard.getContext("2d");
     ctx.font = "30px Arial";
-    ctx.clearRect(0,0,200,400);
+    ctx.clearRect(0,0,200,350);
     ctx.fillText(`ScoreBoard`, 10, 50);
     let i = 0;
     while (i < 5) {
       if( this.scoreboard[i] ) {
-        ctx.fillText(`${i + 1}  score: ${this.scoreboard[i]}`, 10, 60 * (i + 1) + 50);
+        ctx.fillText(`${i + 1}  score: ${this.scoreboard[i]}`, 10, 50 * (i + 1) + 50);
       } else {
-        ctx.fillText(`${i + 1}  score: 0`, 10, 60 * (i + 1) + 50);
+        ctx.fillText(`${i + 1}  score: 0`, 10, 50 * (i + 1) + 50);
       }
       i++;
     }
@@ -196,19 +196,19 @@ class Controller {
   keyboard() {
     document.addEventListener('keydown', (event) => {
         //left
-      if(event.keyCode === 37) {
+      if(event.keyCode === 65) {
         this.moveitem(-30);
       }
       //top
-      else if(event.keyCode === 38) {
+      else if(event.keyCode === 87) {
           this.transposeitem();
       }
       //right
-      else if(event.keyCode === 39) {
+      else if(event.keyCode === 68) {
           this.moveitem(+30);
       }
       //bottom
-      else if(event.keyCode === 40) {
+      else if(event.keyCode === 83) {
           this.dropitem();
       }
     });
