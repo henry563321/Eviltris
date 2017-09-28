@@ -451,7 +451,7 @@ var Piece = function () {
       piecescore.sort(function (a, b) {
         return a.score - b.score;
       });
-      return piecescore[Math.floor(Math.random() * (piecescore.length - 1))].piece;
+      return piecescore[Math.floor(Math.random() * (piecescore.length - 5))].piece;
     }
   }, {
     key: 'search',
